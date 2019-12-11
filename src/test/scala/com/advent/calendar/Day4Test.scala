@@ -8,6 +8,6 @@ class Day4Test extends UnitTest {
 
   test("count how many different passwords") {
     val result = SecureContainer.countValidPassword(193651, 649729)
-    println("===> Day 4a: $result")
+    println(s"===> Day 4: $result")
   }
 }
