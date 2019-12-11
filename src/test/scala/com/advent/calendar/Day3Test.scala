@@ -17,4 +17,12 @@ class Day3Test extends UnitTest {
     val minManhattanDistanceForCrossedPoint = CrossWires.execute(input(0), input(1))
     println(s"===> Day 3a: ${minManhattanDistanceForCrossedPoint}") // 217
   }
+
+  test("Fewest combined steps the wires must take to reach an intersectio") {
+    val filePath = getClass.getClassLoader.getResource("fixtures/day3.txt").getPath
+    val input = Source.fromFile(filePath).getLines.map(_.split(",")).toArray
+
+    val steps = CrossWires.executeB(input(0), input(1))
+    println(s"===> Day 3b: $steps") // 217
+  }
 }

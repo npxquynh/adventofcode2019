@@ -34,4 +34,11 @@ class CrossWiresTest extends UnitTest {
     
     CrossWires.execute(input1, input2) shouldBe 135
   }
+
+  test("Fewest steps from both wires to reach intersection") {
+    val input1 = "R75,D30,R83,U83,L12,D49,R71,U7,L72".split(",")
+    val input2 = "U62,R66,U55,R34,D71,R55,D58,R83".split(",")
+    
+    CrossWires.executeB(input1, input2) shouldBe 610
+  }
 }

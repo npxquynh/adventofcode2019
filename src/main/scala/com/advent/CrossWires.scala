@@ -10,8 +10,9 @@ import scala.collection.generic.{
   CanBuildFrom
 }
 import scala.math
+import java.time.OffsetTime
 
-sealed class Direction
+sealed trait Direction
 object Direction {
   case object RIGHT extends Direction
   case object LEFT extends Direction
@@ -78,10 +79,23 @@ object CrossWires {
    * What is the Manhattan distance from the central port to the closest intersection?
    */
   def execute(first: Seq[String], second: Seq[String]): Int = {
-    val firstPath = WirePath.build(first).toSet
-    val secondPath = WirePath.build(second).toSet
+    val firstPath = WirePath.build(first)
+    val secondPath = WirePath.build(second)
 
-    val crossedPoints = firstPath.intersect(secondPath)
+    val crossedPoints = firstPath.intersect(secondPath).distinct
     crossedPoints.map(coordinate => DistanceFn(coordinate.x, coordinate.y)).min
+  }
+
+  /**
+   * What is the fewest combined steps the wires must take to reach an intersection?
+   */
+  def executeB(first: Seq[String], second: Seq[String]): Int = {
+    val offsetForRootCoordinate = 2 
+
+    val firstPath = WirePath.build(first)
+    val secondPath = WirePath.build(second)
+
+    val crossedPoints = firstPath.intersect(secondPath).distinct
+    crossedPoints.map(point => firstPath.indexOf(point) + secondPath.indexOf(point)).min + offsetForRootCoordinate
   }
 }
