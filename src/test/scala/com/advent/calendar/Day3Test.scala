@@ -15,6 +15,6 @@ class Day3Test extends UnitTest {
     val input = Source.fromFile(filePath).getLines.map(_.split(",")).toArray
 
     val minManhattanDistanceForCrossedPoint = CrossWires.execute(input(0), input(1))
-    println(minManhattanDistanceForCrossedPoint) // 217
+    println(s"===> Day 3a: ${minManhattanDistanceForCrossedPoint}") // 217
   }
 }

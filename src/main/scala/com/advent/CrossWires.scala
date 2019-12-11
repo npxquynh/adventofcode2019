@@ -35,13 +35,13 @@ object Coordinate {
   def findAllCoordinates(
       coordiate: Coordinate,
       move: String
-  ): Seq[Coordinate] = {
+  ): List[Coordinate] = {
     val direction = Direction(move(0))
     val times = move.substring(1).toInt
 
     (1 to times).scanLeft(coordiate) { (coordiate, _) =>
       findNextCoordinate(coordiate, direction)
-    }
+    }.tail.toList
   }
 
   private def findNextCoordinate(
@@ -56,52 +56,14 @@ object Coordinate {
   }
 }
 
-class WirePath(seq: Coordinate*)
-    extends Set[Coordinate]
-    with SetLike[Coordinate, WirePath]
-    with Serializable {
-
-  override def empty: WirePath = new WirePath()
-
-  // Members declared in scala.collection.GenSetLike
-  def iterator: Iterator[Coordinate] = seq.iterator
-
-  // Members declared in scala.collection.SetLike
-  def -(elem: Coordinate): WirePath =
-    if (!seq.contains(elem)) this
-    else new WirePath(seq.filterNot(elem ==): _*)
-
-  def +(elem: Coordinate): WirePath =
-    if (seq.contains(elem)) this
-    else {
-      new WirePath(elem +: seq: _*)
-    }
-
-  def contains(elem: Coordinate): Boolean = seq exists (elem ==)
-}
-
 object WirePath {
 
   val RootCoordinate = Coordinate(0, 0)
-  val Start = new WirePath()
 
-  // SetLike
-  def empty: WirePath = new WirePath()
-  def newBuilder: Builder[Coordinate, WirePath] =
-    new SetBuilder[Coordinate, WirePath](empty)
-  def apply(elems: Coordinate*): WirePath = (empty /: elems)(_ + _)
-  def thingSetCanBuildFrom = new CanBuildFrom[WirePath, Coordinate, WirePath] {
-    def apply(from: WirePath) = newBuilder
-    def apply() = newBuilder
-  }
-
-  def build(moves: Seq[String]): WirePath = {
-    moves.foldLeft((Start, RootCoordinate)) { (X, move) => 
-      {
-        val paths = Coordinate.findAllCoordinates(X._2, move)
-        val wirePath = X._1 ++ (new WirePath(paths.tail: _*))  
-        (wirePath, paths.last)
-      }
+  def build(moves: Seq[String]): List[Coordinate] = {
+    moves.foldLeft((List.empty[Coordinate], RootCoordinate)) { (X, move) => 
+      val points = Coordinate.findAllCoordinates(X._2, move)
+      (X._1 ++ points, points.last)
     }._1
   }
 
@@ -116,8 +78,8 @@ object CrossWires {
    * What is the Manhattan distance from the central port to the closest intersection?
    */
   def execute(first: Seq[String], second: Seq[String]): Int = {
-    val firstPath = WirePath.build(first)
-    val secondPath = WirePath.build(second)
+    val firstPath = WirePath.build(first).toSet
+    val secondPath = WirePath.build(second).toSet
 
     val crossedPoints = firstPath.intersect(secondPath)
     crossedPoints.map(coordinate => DistanceFn(coordinate.x, coordinate.y)).min

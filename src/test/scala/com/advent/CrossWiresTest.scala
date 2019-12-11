@@ -6,15 +6,15 @@ import java.io.File
 
 class CrossWiresTest extends UnitTest {
 
-  test("build WirePath") {
+  test("build paths with List") {
     val input: Seq[String] = "R2,U1,L1,D3".split(",")
-    val wirePath = new WirePath
 
-    val expectedPaths = Set(
+    val expectedPaths = List(
       Coordinate(1, 0),
       Coordinate(2, 0),
       Coordinate(2, 1),
       Coordinate(1, 1),
+      Coordinate(1, 0),
       Coordinate(1, -1),
       Coordinate(1, -2)
     )
