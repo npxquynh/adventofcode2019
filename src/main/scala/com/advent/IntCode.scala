@@ -1,53 +1,60 @@
 package com.advent
-import com.advent.Mode.Position
 
-sealed trait Mode
+import com.advent.OpCode._
 
-object Mode {
-  case object Position extends Mode
-  case object Immediate extends Mode
-
-  def build(mode: Int = 0): Mode = {
-    if (mode == 0) Position
-    else Immediate
-  }
-}
-class Instruction(opCode: Int, firstMode: Mode, secondMode: Mode, thirdMode: Mode) {
-
-  def apply(instruction: String): Instruction = {
-    val opCode = instruction.takeRight(2).toInt
-
-    new Instruction(2, Position, Position, Position)
-  }
-}
 class IntCode(input: Array[Int]) {
-  val Step = 4
+  case class Param(mode: ParamMode, value: Int)
 
   def execute(): Array[Int] = {
+    var index = 0
+    var flag = true
+    while (flag) {
+      val instruction = new Instruction(input(index))
+      index += 1
 
-
-    def helper(binaryOp: (Int, Int) => Int, baseIndex: Int) =
-      update(get(baseIndex + 3), binaryOp(get(get(baseIndex + 1)), get(get(baseIndex + 2))))
-
-    val addMethod: (Int, Int) => Int = _ + _
-    val multiplyMethod: (Int, Int) => Int = _ * _
-
-    var currentIndex = 0
-    var opCode = get(currentIndex)
-
-    while(opCode != 99) {
-      if (opCode == 1) helper(addMethod, currentIndex)
-      else if (opCode == 2) helper(multiplyMethod, currentIndex)
-      else throw new IllegalArgumentException(s"Illegal opCode $opCode")
-
-      currentIndex = currentIndex + Step
-      opCode = get(currentIndex)
+      if (instruction.opCode == Halt) flag = false
+      
+      process(instruction, index) 
+      index += instruction.opCode.noArguments
     }
 
     input
   }
 
-  private def get(i: Int): Int = input(i)
+  private val addFn: (Int, Int) => Int = _ + _
+  private val multiplyFn: (Int, Int) => Int = _ * _
 
-  private def update(i: Int, value: Int) = input.update(i, value)
+  private def process(instruction: Instruction, index: Int): Unit = {
+    val params = getParams(instruction, index)
+    assert(params.length == instruction.opCode.noArguments)
+
+    instruction.opCode match {
+      case Add      => binaryOp(params, addFn)
+      case Multiply => binaryOp(params, multiplyFn)
+      case Store => store(params.head)
+      case Output => println(params)
+      case _ => ()
+    }
+  }
+
+  private def getParams(instruction: Instruction, index: Int): Seq[Param] = {
+    val rawParams = (index until (index + instruction.opCode.noArguments)).map(input(_))
+    assert(rawParams.length >= instruction.paramModes.length)
+    instruction.paramModes.zipAll(rawParams, ParamMode.Position, 0).map(x => Param(x._1, x._2))
+  }
+
+  private def binaryOp(params: Seq[Param], fn: (Int, Int) => Int) = {
+    val result = fn(getValue(params(0)), getValue(params(1)))
+    setValue(params(2), result)
+  }
+
+  private def store(param: Param): Unit = 
+    setValue(param, param.value)
+
+  private def getValue(param: Param): Int =
+    if (param.mode == ParamMode.Position) input(param.value)
+    else param.value
+
+  private def setValue(param: Param, newValue: Int): Unit =
+    input.update(param.value, newValue)
 }
