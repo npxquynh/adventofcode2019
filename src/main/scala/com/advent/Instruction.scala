@@ -17,6 +17,18 @@ object OpCode {
   case object Output extends OpCode {
     override val noArguments: Int = 1
   }
+  case object JumpIfTrue extends OpCode {
+    override val noArguments: Int = 2
+  }
+  case object JumpIfFalse extends OpCode {
+    override val noArguments: Int = 2
+  }
+  case object LessThan extends OpCode {
+    override val noArguments: Int = 3
+  }
+  case object Equals extends OpCode {
+    override val noArguments: Int = 3
+  }
   case object Halt extends OpCode
   case object Unknown extends OpCode
 
@@ -25,6 +37,10 @@ object OpCode {
     case 2 => Multiply
     case 3 => Store 
     case 4 => Output
+    case 5 => JumpIfTrue
+    case 6 => JumpIfFalse
+    case 7 => LessThan
+    case 8 => Equals
     case 99 => Halt 
   }
 }
