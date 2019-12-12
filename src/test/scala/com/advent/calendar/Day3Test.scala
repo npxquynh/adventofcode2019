@@ -4,8 +4,6 @@ import com.advent.UnitTest
 
 import scala.io.Source
 import java.io.File
-import com.advent.UnitTest
-import com.advent.Universe
 import com.advent.CrossWires
 
 class Day3Test extends UnitTest {

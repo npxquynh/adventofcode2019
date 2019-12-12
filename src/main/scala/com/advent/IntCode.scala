@@ -32,7 +32,8 @@ class IntCode(input: Array[Int]) {
       case Add      => binaryOp(params, addFn)
       case Multiply => binaryOp(params, multiplyFn)
       case Store => store(params.head)
-      case Output => println(params)
+      case Output => println(s"==> ${getValue(params.head)}")
+      case JumpIfTrue => jumpIfTrue(params)
       case _ => ()
     }
   }
@@ -48,9 +49,16 @@ class IntCode(input: Array[Int]) {
     setValue(params(2), result)
   }
 
-  private def store(param: Param): Unit = 
-    setValue(param, param.value)
+  private def store(param: Param): Unit = {
+    println("Input some value:")
+    val inputValue = scala.io.StdIn.readInt
+    setValue(param, inputValue)
+  }
 
+  private def jumpIfTrue(params: Seq[Param]) = {
+    val values = params.map(getValue _)
+    val first = getValue(params)
+  }
   private def getValue(param: Param): Int =
     if (param.mode == ParamMode.Position) input(param.value)
     else param.value
