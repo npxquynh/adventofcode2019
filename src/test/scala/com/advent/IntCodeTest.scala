@@ -1,9 +1,6 @@
 package com.advent 
 
 import org.scalatest._
-import scala.io.Source
-import java.io.File
-import java.io.ByteArrayInputStream
 
 class IntCodeTest extends UnitTest {
 

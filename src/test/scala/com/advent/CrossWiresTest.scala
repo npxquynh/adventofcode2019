@@ -1,8 +1,6 @@
 package com.advent
 
 import org.scalatest._
-import scala.io.Source
-import java.io.File
 
 class CrossWiresTest extends UnitTest {
 

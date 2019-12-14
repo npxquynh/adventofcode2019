@@ -1,8 +1,6 @@
 package com.advent
 
 import org.scalatest._
-import scala.io.Source
-import java.io.File
 import com.advent.SecureContainer.PasswordRule
 
 class SecureContainerTest extends UnitTest {
